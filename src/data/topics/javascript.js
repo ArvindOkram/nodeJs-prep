@@ -3,53 +3,76 @@ export const javascript = [
     id: 'js-fundamentals',
     title: 'JS Fundamentals',
     category: 'JavaScript',
-    starterCode: `// JavaScript Fundamentals: Scope, Hoisting, Closures
+    starterCode: `// ── HOISTING ──────────────────────────────────────────
+console.log('=== What IS hoisted ===');
 
-// 1. var vs let vs const
-console.log('=== var Hoisting ===');
-console.log(hoisted); // undefined (not error) - var is hoisted
-var hoisted = 'value';
+// 1. var → hoisted + initialized to undefined
+console.log('var before decl:', x); // undefined (no error!)
+var x = 10;
+console.log('var after decl:', x);  // 10
 
-// let/const are hoisted but NOT initialized (Temporal Dead Zone)
-// console.log(notReady); // ReferenceError: Cannot access before initialization
-let notReady = 'ready now';
+// 2. function declaration → FULLY hoisted (callable before declaration)
+console.log('fn before decl:', add(2, 3)); // 5 ✓
+function add(a, b) { return a + b; }
 
-// 2. Closures
-console.log('\\n=== Closures ===');
+// 3. let/const → hoisted but in Temporal Dead Zone (TDZ)
+// console.log(y); // ❌ ReferenceError — TDZ!
+let y = 20;
+console.log('let after decl:', y); // 20
+
+// What is NOT hoisted:
+// var sayHi = function(){} → expression, only var is hoisted
+console.log('var fn expr:', typeof sayHi); // 'undefined'
+var sayHi = function() { return 'hi'; };
+// console.log(sayHi()); → TypeError: sayHi is not a function (before this line)
+
+console.log('\\n=== Hoisting order in scope ===');
+function demo() {
+  console.log(a); // undefined (var hoisted within function scope)
+  var a = 'inside';
+  console.log(a); // 'inside'
+}
+demo();
+
+// ── CLOSURES ───────────────────────────────────────────
+console.log('\\n=== Closure: private state ===');
 function makeCounter(start = 0) {
-  let count = start; // private state in closure
+  let count = start; // enclosed — not accessible outside
   return {
     inc: () => ++count,
     dec: () => --count,
     get: () => count,
+    reset: () => { count = start; }
   };
 }
+const c1 = makeCounter(0);
+const c2 = makeCounter(100); // independent closure
+c1.inc(); c1.inc(); c1.inc();
+c2.inc();
+console.log('c1:', c1.get()); // 3
+console.log('c2:', c2.get()); // 101 — separate closure!
 
-const counter = makeCounter(10);
-console.log(counter.inc()); // 11
-console.log(counter.inc()); // 12
-console.log(counter.dec()); // 11
-console.log(counter.get()); // 11
+console.log('\\n=== Closure loop bug: var vs let ===');
+const varFns = [];
+for (var i = 0; i < 3; i++) varFns.push(() => i);
+console.log('var loop:', varFns.map(f => f())); // [3,3,3] ← all share same i
 
-// 3. Classic closure bug with var
-console.log('\\n=== Closure Bug (var vs let) ===');
-const fnsVar = [];
-for (var i = 0; i < 3; i++) fnsVar.push(() => i); // all capture same i
-console.log('var:', fnsVar.map(f => f())); // [3, 3, 3] ← bug!
+const letFns = [];
+for (let j = 0; j < 3; j++) letFns.push(() => j);
+console.log('let loop:', letFns.map(f => f())); // [0,1,2] ← each has own j
 
-const fnsLet = [];
-for (let j = 0; j < 3; j++) fnsLet.push(() => j); // each j is new binding
-console.log('let:', fnsLet.map(f => f())); // [0, 1, 2] ← correct
-
-// 4. this context
-console.log('\\n=== this keyword ===');
-const obj = {
-  name: 'Node.js',
-  regular: function() { return this.name; },   // this = obj
-  arrow: () => 'no own this',                   // arrow inherits outer this
-};
-console.log(obj.regular()); // 'Node.js'
-console.log(obj.arrow());   // 'no own this'`,
+console.log('\\n=== Closure: memoization ===');
+function memoize(fn) {
+  const cache = {};
+  return function(n) {
+    if (n in cache) { console.log('cache hit:', n); return cache[n]; }
+    cache[n] = fn(n);
+    return cache[n];
+  };
+}
+const factorial = memoize(function f(n) { return n <= 1 ? 1 : n * f(n-1); });
+console.log(factorial(5)); // 120
+console.log(factorial(5)); // cache hit`,
     content: `
 <h1>JavaScript Fundamentals</h1>
 
@@ -57,81 +80,400 @@ console.log(obj.arrow());   // 'no own this'`,
 <table>
   <tr><th></th><th>var</th><th>let</th><th>const</th></tr>
   <tr><td>Scope</td><td>Function</td><td>Block</td><td>Block</td></tr>
-  <tr><td>Hoisted</td><td>Yes (initialized undefined)</td><td>Yes (TDZ — uninitialized)</td><td>Yes (TDZ)</td></tr>
-  <tr><td>Re-declare</td><td>Yes</td><td>No</td><td>No</td></tr>
-  <tr><td>Re-assign</td><td>Yes</td><td>Yes</td><td>No (binding, not value)</td></tr>
-  <tr><td>Window prop</td><td>Yes (global)</td><td>No</td><td>No</td></tr>
+  <tr><td>Hoisted</td><td>Yes — initialized to <code>undefined</code></td><td>Yes — TDZ (uninitialized)</td><td>Yes — TDZ (uninitialized)</td></tr>
+  <tr><td>Re-declare same scope</td><td>Yes</td><td>No (SyntaxError)</td><td>No (SyntaxError)</td></tr>
+  <tr><td>Re-assign</td><td>Yes</td><td>Yes</td><td>No (TypeError)</td></tr>
+  <tr><td>Global window prop</td><td>Yes</td><td>No</td><td>No</td></tr>
+  <tr><td>Loop binding</td><td>Shared across iterations</td><td>New binding per iteration</td><td>New binding per iteration</td></tr>
 </table>
 
-<h2>Hoisting</h2>
-<p>During the compilation phase, variable and function declarations are moved to the top of their scope.</p>
-<pre><code>// Functions are fully hoisted
-console.log(greet()); // "Hello!" ← works
+<!-- ═══════════════════════════════════════════ -->
+<h2>Hoisting — Complete Guide</h2>
+<p>JavaScript has two phases: <strong>compilation</strong> (declarations are registered) and <strong>execution</strong> (code runs line-by-line). Hoisting happens during compilation — identifiers are registered in memory before any code executes. What changes between <code>var</code>, <code>let</code>, <code>const</code>, and functions is <em>how</em> they are registered.</p>
 
-function greet() { return "Hello!"; }
+<h3>What IS Hoisted ✅</h3>
+<table>
+  <tr><th>Declaration</th><th>Hoisted?</th><th>Initialized to</th><th>Usable before declaration?</th></tr>
+  <tr><td><code>var x</code></td><td>Yes</td><td><code>undefined</code></td><td>Yes — but value is <code>undefined</code></td></tr>
+  <tr><td><code>function foo(){}</code></td><td>Yes — fully</td><td>The function itself</td><td>Yes — callable immediately</td></tr>
+  <tr><td><code>let x</code></td><td>Yes — but TDZ</td><td>Uninitialized</td><td>No — ReferenceError</td></tr>
+  <tr><td><code>const x</code></td><td>Yes — but TDZ</td><td>Uninitialized</td><td>No — ReferenceError</td></tr>
+  <tr><td><code>class Foo{}</code></td><td>Yes — but TDZ</td><td>Uninitialized</td><td>No — ReferenceError</td></tr>
+</table>
 
-// var — hoisted and initialized to undefined
-console.log(x); // undefined (no error)
-var x = 5;
+<h3>What is NOT Hoisted ❌</h3>
+<table>
+  <tr><th>Expression</th><th>What happens</th></tr>
+  <tr><td><code>var fn = function(){}</code></td><td><code>var fn</code> is hoisted as <code>undefined</code>; the function is NOT. Calling <code>fn()</code> before this line → TypeError</td></tr>
+  <tr><td><code>var fn = () => {}</code></td><td>Same as above — arrow functions are expressions, not declarations</td></tr>
+  <tr><td><code>let/const fn = function(){}</code></td><td>Identifier in TDZ — ReferenceError if accessed early</td></tr>
+  <tr><td>Initializations / assignments</td><td>Only declarations hoist, never the values assigned to them</td></tr>
+</table>
 
-// let/const — hoisted but NOT initialized (Temporal Dead Zone)
-console.log(y); // ReferenceError: Cannot access 'y' before initialization
-let y = 5;
+<h3>var Hoisting</h3>
+<pre><code>// What you write:
+console.log(name); // undefined — NOT an error
+var name = 'Alice';
+console.log(name); // 'Alice'
 
-// Function expressions are NOT hoisted
-console.log(sayHi()); // TypeError: sayHi is not a function
-var sayHi = function() { return "Hi!"; };</code></pre>
+// What JS engine sees after hoisting:
+var name;           // declaration moved to top, initialized undefined
+console.log(name); // undefined
+name = 'Alice';    // assignment stays in place
+console.log(name); // 'Alice'</code></pre>
 
-<h2>Closures</h2>
-<p>A closure is a function that retains access to its lexical scope even after the outer function has returned. The function "closes over" the variables from its parent scope.</p>
-<pre><code>function createMultiplier(factor) {
-  // factor is in closure scope
-  return (number) => number * factor; // inner fn captures factor
+<h3>Function Declaration Hoisting (Fully Hoisted)</h3>
+<pre><code>// Works fine — function declarations are fully hoisted
+console.log(add(2, 3)); // 5 ✓
+
+function add(a, b) {
+  return a + b;
 }
 
-const double = createMultiplier(2);
-const triple = createMultiplier(3);
+// The entire function body is available from the start of its scope
+// Useful for: putting helper functions at the bottom of a file</code></pre>
 
-console.log(double(5)); // 10
-console.log(triple(5)); // 15
-// factor is gone from stack but lives on in closure
+<h3>Function Expression — NOT Hoisted</h3>
+<pre><code>// ❌ Only the var declaration is hoisted, not the function
+console.log(typeof multiply); // 'undefined'
+multiply(2, 3);               // TypeError: multiply is not a function
 
-// Practical: private state (module pattern)
-function createBankAccount(initialBalance) {
-  let balance = initialBalance; // private
+var multiply = function(a, b) { return a * b; };
 
-  return {
-    deposit: (amount) => { balance += amount; },
-    withdraw: (amount) => {
-      if (amount > balance) throw new Error('Insufficient funds');
-      balance -= amount;
-    },
-    getBalance: () => balance,
+// ❌ Arrow function — same behavior
+console.log(typeof divide); // 'undefined'
+var divide = (a, b) => a / b;
+
+// ✅ With let/const — even stricter: TDZ → ReferenceError
+// console.log(square); // ReferenceError
+const square = (n) => n * n;</code></pre>
+
+<h3>Temporal Dead Zone (TDZ) — Deep Dive</h3>
+<p>The TDZ is the time between <strong>entering the scope</strong> and the <strong>variable's declaration line</strong>. During this period, the identifier exists in memory (it was hoisted) but is not initialized — accessing it throws a <code>ReferenceError</code>.</p>
+<pre><code>{
+  // TDZ for 'x' STARTS here (block entered)
+  console.log(x); // ❌ ReferenceError: Cannot access 'x' before initialization
+  let x = 5;      // TDZ ENDS here — x is now initialized
+  console.log(x); // ✅ 5
+}
+
+// TDZ with typeof (usually safe, but not with let/const)
+console.log(typeof undeclaredVar); // 'undefined' — safe for undeclared
+// console.log(typeof tdzVar);     // ❌ ReferenceError even with typeof!
+let tdzVar = 1;
+
+// TDZ catches bugs like this:
+let price = 100;
+{
+  // console.log(price); // ❌ ReferenceError — inner let shadows outer, creates TDZ
+  let price = 200;
+  console.log(price); // 200
+}</code></pre>
+
+<h3>Hoisting Inside Functions</h3>
+<pre><code>var name = 'global';
+
+function test() {
+  console.log(name); // undefined — NOT 'global'!
+  // Why? var name inside is hoisted to top of function scope
+  // shadowing the global 'name' — but initialized as undefined
+
+  var name = 'local';
+  console.log(name); // 'local'
+}
+test();
+
+// This is why var can cause subtle bugs — always use let/const</code></pre>
+
+<h3>Class Hoisting</h3>
+<pre><code>// ❌ Classes are in TDZ — cannot use before declaration
+const obj = new MyClass(); // ReferenceError
+
+class MyClass {
+  constructor() { this.val = 42; }
+}
+
+// ✅ After declaration — works fine
+const obj2 = new MyClass();
+console.log(obj2.val); // 42</code></pre>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>Closures — Complete Guide</h2>
+<p>A closure is the combination of a function and the <strong>lexical environment</strong> in which it was defined. The inner function retains a <em>live reference</em> to the variables in its outer scope — not a copy — even after the outer function has returned.</p>
+
+<pre><code>function outer() {
+  let count = 0;            // lives in outer's lexical environment
+
+  function inner() {
+    count++;                // inner "closes over" count
+    return count;
+  }
+
+  return inner;
+}
+
+const fn = outer();         // outer() has returned — count "should be gone"
+console.log(fn()); // 1    // but count is still alive in the closure!
+console.log(fn()); // 2
+console.log(fn()); // 3</code></pre>
+
+<h3>How Closures Work Internally</h3>
+<pre><code>// Every function has an internal [[Environment]] slot
+// pointing to the Lexical Environment where it was created
+
+function createAdder(x) {
+  // Lexical Environment: { x: 5 }
+  return function(y) {
+    // [[Environment]] → { x: 5 }
+    return x + y;  // looks up x in captured environment
   };
 }
 
-const account = createBankAccount(100);
-account.deposit(50);
-console.log(account.getBalance()); // 150
-// balance is not directly accessible</code></pre>
+const add5 = createAdder(5);  // closes over { x: 5 }
+const add10 = createAdder(10); // closes over { x: 10 }
+
+add5(3);   // 8  — uses x=5 from its own closure
+add10(3);  // 13 — uses x=10 from its own closure
+// Each call to createAdder creates a NEW lexical environment</code></pre>
+
+<h3>Closures Capture by Reference, Not by Value</h3>
+<pre><code>function makeMultipliers() {
+  const multipliers = [];
+
+  for (var i = 1; i <= 3; i++) {
+    multipliers.push(function() { return i * 10; });
+    // All 3 functions close over the SAME 'i' variable (var)
+  }
+
+  return multipliers; // by now i = 4 (after loop)
+}
+
+const [m1, m2, m3] = makeMultipliers();
+console.log(m1()); // 40 — NOT 10! captures i=4
+console.log(m2()); // 40
+console.log(m3()); // 40
+
+// ✅ Fix 1: use let (new binding per iteration)
+function makeMultipliersFixed() {
+  const multipliers = [];
+  for (let i = 1; i <= 3; i++) {
+    multipliers.push(() => i * 10); // each i is a new binding
+  }
+  return multipliers;
+}
+const [f1, f2, f3] = makeMultipliersFixed();
+console.log(f1(), f2(), f3()); // 10, 20, 30 ✓
+
+// ✅ Fix 2: IIFE to create a new scope (pre-ES6 pattern)
+for (var j = 1; j <= 3; j++) {
+  (function(captured) {
+    // captured is a new variable in this IIFE's scope
+    setTimeout(() => console.log(captured), 0); // 1, 2, 3
+  })(j);
+}</code></pre>
+
+<h3>Practical Use Cases</h3>
+
+<h4>1. Private State (Module Pattern)</h4>
+<pre><code>function createBankAccount(initial) {
+  let balance = initial; // truly private — no external access
+
+  return {
+    deposit(amount) {
+      if (amount <= 0) throw new Error('Amount must be positive');
+      balance += amount;
+    },
+    withdraw(amount) {
+      if (amount > balance) throw new Error('Insufficient funds');
+      balance -= amount;
+    },
+    get balance() { return balance; } // read-only getter
+  };
+}
+
+const account = createBankAccount(1000);
+account.deposit(500);
+account.withdraw(200);
+console.log(account.balance); // 1300
+// account.balance = 0;        // ← does nothing (getter, no setter)
+// console.log(balance);       // ReferenceError — truly private</code></pre>
+
+<h4>2. Factory Functions with Shared Private State</h4>
+<pre><code>function createIdGenerator(prefix = 'id') {
+  let lastId = 0; // shared across all returned functions
+
+  return {
+    next: () => \`\${prefix}-\${++lastId}\`,
+    reset: () => { lastId = 0; },
+    peek: () => lastId,
+  };
+}
+
+const userIds = createIdGenerator('user');
+const orderIds = createIdGenerator('order');
+
+console.log(userIds.next());  // 'user-1'
+console.log(userIds.next());  // 'user-2'
+console.log(orderIds.next()); // 'order-1' — independent counter
+console.log(userIds.peek());  // 2</code></pre>
+
+<h4>3. Memoization (Cache via Closure)</h4>
+<pre><code>function memoize(fn) {
+  const cache = new Map(); // cache lives in the closure
+
+  return function(...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) {
+      console.log('Cache hit!');
+      return cache.get(key);
+    }
+    const result = fn.apply(this, args);
+    cache.set(key, result);
+    return result;
+  };
+}
+
+const expensiveFn = memoize((n) => {
+  console.log('Computing...');
+  return n * n;
+});
+
+expensiveFn(5); // Computing... → 25
+expensiveFn(5); // Cache hit! → 25 (no recompute)
+expensiveFn(6); // Computing... → 36</code></pre>
+
+<h4>4. Partial Application</h4>
+<pre><code>function multiply(a, b) { return a * b; }
+
+function partial(fn, ...presetArgs) {
+  return function(...laterArgs) {
+    return fn(...presetArgs, ...laterArgs); // presetArgs in closure
+  };
+}
+
+const double = partial(multiply, 2);
+const triple = partial(multiply, 3);
+
+console.log(double(5));  // 10
+console.log(triple(5));  // 15
+console.log(double(21)); // 42</code></pre>
+
+<h4>5. Event Handlers Preserving State</h4>
+<pre><code>function makeButton(label) {
+  let clickCount = 0; // closed over by the handler
+
+  const button = document.createElement('button');
+  button.textContent = label;
+
+  button.addEventListener('click', function() {
+    clickCount++;  // each button has its own count in closure
+    console.log(\`"\${label}" clicked \${clickCount} time(s)\`);
+  });
+
+  return button;
+}
+
+const btn1 = makeButton('Like');
+const btn2 = makeButton('Share');
+// Each button tracks its own independent count</code></pre>
+
+<h4>6. Once — Run a Function Only Once</h4>
+<pre><code>function once(fn) {
+  let called = false;
+  let result;
+
+  return function(...args) {
+    if (!called) {
+      called = true;
+      result = fn.apply(this, args);
+    }
+    return result;
+  };
+}
+
+const initDB = once(() => {
+  console.log('DB initialized!');
+  return { connected: true };
+});
+
+initDB(); // DB initialized!
+initDB(); // nothing — already called
+initDB(); // nothing</code></pre>
+
+<h3>Closures and Memory</h3>
+<pre><code>// Closures keep outer variables alive → potential memory leaks
+
+function createLeak() {
+  const bigData = new Array(1000000).fill('data'); // 1M items
+  return function() {
+    return bigData[0]; // only needs first element
+    // but entire bigData array is kept alive in closure!
+  };
+}
+
+// ✅ Fix: only close over what you need
+function createNoLeak() {
+  const bigData = new Array(1000000).fill('data');
+  const needed = bigData[0]; // extract only what's needed
+  // bigData can now be garbage collected
+  return function() {
+    return needed;
+  };
+}
+
+// Also: remove event listeners when done to free closures
+function setup() {
+  const data = fetchLargeData();
+  const handler = () => process(data); // closes over data
+  element.addEventListener('click', handler);
+
+  return () => element.removeEventListener('click', handler); // cleanup
+}</code></pre>
+
+<h3>Closure vs Class — Same Thing, Different Syntax</h3>
+<pre><code>// Closure approach
+function createCounter(start = 0) {
+  let count = start;
+  return {
+    inc: () => ++count,
+    get: () => count,
+  };
+}
+
+// Class approach
+class Counter {
+  #count; // private field
+  constructor(start = 0) { this.#count = start; }
+  inc() { return ++this.#count; }
+  get count() { return this.#count; }
+}
+
+// Both achieve private state — closures are simpler,
+// classes are better for multiple instances with shared methods</code></pre>
 
 <h2>Scope Chain</h2>
-<pre><code>const globalVar = 'global';
+<pre><code>const global = 'global';
 
 function outer() {
   const outerVar = 'outer';
 
-  function inner() {
-    const innerVar = 'inner';
-    // Can access: innerVar, outerVar, globalVar (scope chain lookup)
-    console.log(globalVar, outerVar, innerVar);
-  }
+  function middle() {
+    const middleVar = 'middle';
 
-  inner();
-  // Cannot access innerVar here
+    function inner() {
+      const innerVar = 'inner';
+      // Scope chain lookup: inner → middle → outer → global → built-ins
+      console.log(innerVar);   // found in inner scope
+      console.log(middleVar);  // found in middle scope
+      console.log(outerVar);   // found in outer scope
+      console.log(global);     // found in global scope
+    }
+    inner();
+  }
+  middle();
 }
 
-// Scope chain: inner → outer → global → built-ins</code></pre>
+// Scope chain: inner → middle → outer → global → Object.prototype → null</code></pre>
 
 <h2>The <code>this</code> Keyword</h2>
 <table>
@@ -139,10 +481,10 @@ function outer() {
   <tr><td>Global (non-strict)</td><td>window / global</td></tr>
   <tr><td>Global (strict mode)</td><td>undefined</td></tr>
   <tr><td>Object method</td><td>The object before the dot</td></tr>
-  <tr><td>Arrow function</td><td>Inherits from enclosing scope</td></tr>
+  <tr><td>Arrow function</td><td>Inherits from enclosing lexical scope</td></tr>
   <tr><td>new Constructor()</td><td>The newly created object</td></tr>
-  <tr><td>call/apply/bind</td><td>First argument (explicit binding)</td></tr>
-  <tr><td>Event handler</td><td>The DOM element</td></tr>
+  <tr><td>call/apply/bind</td><td>Explicitly provided first argument</td></tr>
+  <tr><td>Event handler</td><td>The DOM element (unless arrow fn)</td></tr>
 </table>
 
 <pre><code>const person = {
@@ -151,12 +493,12 @@ function outer() {
     console.log(this.name);       // 'Alice' — method call
 
     const inner = function() {
-      console.log(this.name);     // undefined (lost this)
+      console.log(this?.name);    // undefined — lost this in regular fn
     };
     inner();
 
     const arrowInner = () => {
-      console.log(this.name);     // 'Alice' — arrow inherits this
+      console.log(this.name);     // 'Alice' — arrow inherits outer this
     };
     arrowInner();
   }
@@ -164,33 +506,29 @@ function outer() {
 
 // Explicit binding
 function greet() { return this.name; }
-greet.call({ name: 'Bob' });       // 'Bob'
-greet.apply({ name: 'Carol' });    // 'Carol'
-const bound = greet.bind({ name: 'Dave' });
+greet.call({ name: 'Bob' });       // 'Bob' — invokes immediately
+greet.apply({ name: 'Carol' });    // 'Carol' — invokes immediately (args as array)
+const bound = greet.bind({ name: 'Dave' }); // returns new function
 bound();                           // 'Dave'</code></pre>
 
-<h2>IIFE (Immediately Invoked Function Expression)</h2>
-<pre><code>// Creates its own scope — avoids polluting global scope
-(function() {
-  const secret = 'hidden';
-  console.log(secret); // accessible inside
-})();
-
-// console.log(secret); // ReferenceError — not accessible outside
-
-// Arrow IIFE
-(() => {
-  console.log('IIFE with arrow');
-})();</code></pre>
-
 <div class="qa-block">
-  <div class="qa-q">Q: What is a closure and give a practical use case?</div>
-  <div class="qa-a">A closure is a function that retains access to its lexical scope even after the outer function returns. The inner function "closes over" the outer variables. Practical uses: (1) Private variables — emulate encapsulation without classes, (2) Factory functions — createMultiplier(2), (3) Memoization — cache results in closure, (4) Event handlers — preserve loop variables with let, (5) Partial application — pre-fill arguments to a function.</div>
+  <div class="qa-q">Q: What is hoisted and what is not?</div>
+  <div class="qa-a"><strong>Hoisted:</strong> (1) var declarations — hoisted and initialized to undefined, (2) function declarations — fully hoisted with their body, callable before declaration, (3) let/const/class — hoisted but placed in TDZ, accessing before declaration throws ReferenceError. <strong>NOT hoisted:</strong> (1) function expressions (var fn = function(){}), (2) arrow functions (var fn = () => {}), (3) initializations/assignments — only declarations hoist, never their values. Key rule: only function declarations are "fully" hoisted and usable before their line.</div>
 </div>
 
 <div class="qa-block">
   <div class="qa-q">Q: What is the Temporal Dead Zone (TDZ)?</div>
-  <div class="qa-a">The period between the start of a block scope and the point where let/const is initialized. Variables exist (are hoisted) but accessing them throws a ReferenceError. This is different from var which is initialized to undefined when hoisted. TDZ enforces the good practice of declaring variables before using them.</div>
+  <div class="qa-a">The TDZ is the period from the start of a block scope to the line where let/const/class is declared. During this time the variable is registered in memory (hoisted) but uninitialized — any read or write throws a ReferenceError. This is different from var which is initialized to undefined. TDZ exists to catch bugs where code depends on variables not yet declared. Even typeof throws in TDZ for let/const, unlike for truly undeclared variables.</div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-q">Q: What is a closure and what are its practical uses?</div>
+  <div class="qa-a">A closure is a function bundled with its lexical environment — the inner function retains a live reference to outer scope variables even after the outer function returns. Key insight: closures capture variables by reference, not by value. Practical uses: (1) Private state / encapsulation without classes, (2) Factory functions that share private state, (3) Memoization — cache stored in closure, (4) Partial application — pre-fill some arguments, (5) Event handlers that track state, (6) once() / debounce() / throttle() — control function execution, (7) Module pattern — expose public API while hiding implementation.</div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-q">Q: Why does the classic var loop closure bug happen?</div>
+  <div class="qa-a">With var, there is only ONE i variable shared across all loop iterations — var is function-scoped, not block-scoped. All the closures created inside the loop point to the same i. By the time they execute, the loop has finished and i equals the final value (e.g. 3). Fixes: (1) Use let — creates a new binding per iteration so each closure captures its own i, (2) IIFE — wrap the loop body in an immediately-invoked function that receives i as a parameter, creating a new scope, (3) Array methods like forEach — each callback has its own scope.</div>
 </div>`,
   },
   {
