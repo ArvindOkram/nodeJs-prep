@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
-import { STORAGE_KEYS, DEFAULT_CODE } from '../utils/constants';
+import { STORAGE_KEYS, DEFAULT_CODE, BLANK_CODE } from '../utils/constants';
 import { runCode } from '../utils/codeRunner';
 
 /**

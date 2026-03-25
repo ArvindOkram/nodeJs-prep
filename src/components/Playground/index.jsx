@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback, useState, lazy, Suspense } from 'react';
 import { useAppContext } from '../../context/AppContext';
+import { BLANK_CODE } from '../../utils/constants';
 import OutputConsole from './OutputConsole';
 import styles from './Playground.module.css';
 
@@ -49,9 +50,9 @@ export default function Playground() {
   // Directly clear Monaco editor via instance + sync React state
   const handleConfirmClear = useCallback(() => {
     if (editorRef.current) {
-      editorRef.current.setValue('');
+      editorRef.current.setValue(BLANK_CODE);
     }
-    setCode('');
+    setCode(BLANK_CODE);
     clearOutput();
     setShowConfirm(false);
   }, [setCode, clearOutput]);

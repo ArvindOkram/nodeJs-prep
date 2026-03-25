@@ -47,4 +47,6 @@ console.log('1 - sync');
 setTimeout(() => console.log('4 - setTimeout'), 0);
 Promise.resolve().then(() => console.log('3 - Promise'));
 console.log('2 - sync end');
-`;
+${'\n'.repeat(18)}`;
+
+export const BLANK_CODE = '\n'.repeat(29);
