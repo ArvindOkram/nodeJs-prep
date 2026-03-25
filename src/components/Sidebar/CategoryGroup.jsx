@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { CATEGORY_ICONS } from '../../utils/constants';
 import styles from './Sidebar.module.css';
 
-export default function CategoryGroup({ category, topics, visited }) {
+export default function CategoryGroup({ category, topics, visited, bookmarks }) {
   const [open, setOpen] = useState(true);
   const doneCount = topics.filter((t) => visited.includes(t.id)).length;
 
@@ -23,7 +23,7 @@ export default function CategoryGroup({ category, topics, visited }) {
       {open && (
         <ul className={styles.topicList}>
           {topics.map((topic) => (
-            <li key={topic.id}>
+            <li key={topic.id} className={styles.topicItem}>
               <NavLink
                 to={`/topic/${topic.id}`}
                 className={({ isActive }) =>
@@ -35,6 +35,13 @@ export default function CategoryGroup({ category, topics, visited }) {
                 </span>
                 {topic.title}
               </NavLink>
+              <button
+                className={`${styles.starBtn} ${bookmarks.isBookmarked(topic.id) ? styles.starred : ''}`}
+                onClick={(e) => { e.preventDefault(); bookmarks.toggle(topic.id); }}
+                title={bookmarks.isBookmarked(topic.id) ? 'Remove bookmark' : 'Bookmark'}
+              >
+                {bookmarks.isBookmarked(topic.id) ? '★' : '☆'}
+              </button>
             </li>
           ))}
         </ul>

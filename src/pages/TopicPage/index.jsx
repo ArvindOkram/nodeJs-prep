@@ -1,23 +1,55 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { topicsById } from '../../data/topics';
 import { useAppContext } from '../../context/AppContext';
 import styles from './TopicPage.module.css';
 
+function getReadingTime(html) {
+  const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const words = text.split(' ').length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+function addCopyButtons(container) {
+  container.querySelectorAll('pre').forEach((pre) => {
+    if (pre.querySelector('.copy-btn')) return; // already added
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', () => {
+      const code = pre.querySelector('code')?.innerText ?? pre.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = '✓ Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+}
+
 export default function TopicPage() {
   const { topicId } = useParams();
   const navigate = useNavigate();
-  const { progress, playground } = useAppContext();
+  const { progress, playground, bookmarks } = useAppContext();
+  const contentRef = useRef(null);
 
   const topic = topicsById[topicId];
 
-  // Mark topic visited and remember last location
   useEffect(() => {
     if (topic) {
       progress.markVisited(topicId);
       localStorage.setItem('njip_last_topic', topicId);
     }
   }, [topicId, topic, progress]);
+
+  // Inject copy buttons after content renders
+  useEffect(() => {
+    if (contentRef.current) addCopyButtons(contentRef.current);
+  }, [topicId]);
 
   if (!topic) {
     return (
@@ -29,20 +61,36 @@ export default function TopicPage() {
     );
   }
 
+  const readTime = getReadingTime(topic.content);
+  const isBookmarked = bookmarks.isBookmarked(topic.id);
+
   return (
     <article className={styles.page}>
       <div className={styles.topBar}>
-        <span className={styles.category}>{topic.category}</span>
-        <button
-          className={styles.tryBtn}
-          onClick={() => playground.loadCode(topic.starterCode)}
-          title="Load this topic's code into the playground"
-        >
-          ⌨ Try in Playground
-        </button>
+        <div className={styles.topBarLeft}>
+          <span className={styles.category}>{topic.category}</span>
+          <span className={styles.readTime}>⏱ {readTime} min read</span>
+        </div>
+        <div className={styles.topBarRight}>
+          <button
+            className={`${styles.bookmarkBtn} ${isBookmarked ? styles.bookmarked : ''}`}
+            onClick={() => bookmarks.toggle(topic.id)}
+            title={isBookmarked ? 'Remove bookmark' : 'Bookmark this topic'}
+          >
+            {isBookmarked ? '★' : '☆'}
+          </button>
+          <button
+            className={styles.tryBtn}
+            onClick={() => playground.loadCode(topic.starterCode)}
+            title="Load this topic's code into the playground"
+          >
+            ⌨ Try in Playground
+          </button>
+        </div>
       </div>
 
       <div
+        ref={contentRef}
         className={styles.content}
         dangerouslySetInnerHTML={{ __html: topic.content }}
       />

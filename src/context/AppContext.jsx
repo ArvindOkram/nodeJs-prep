@@ -1,19 +1,19 @@
 import { createContext, useContext } from 'react';
 import { useProgress } from '../hooks/useProgress';
 import { usePlayground } from '../hooks/usePlayground';
+import { useBookmarks } from '../hooks/useBookmarks';
+import { useTheme } from '../hooks/useTheme';
 
 const AppContext = createContext(null);
 
-/**
- * Global app state provider.
- * Keeps progress tracking and playground state available everywhere.
- */
 export function AppProvider({ children }) {
   const progress = useProgress();
   const playground = usePlayground();
+  const bookmarks = useBookmarks();
+  const themeCtx = useTheme();
 
   return (
-    <AppContext.Provider value={{ progress, playground }}>
+    <AppContext.Provider value={{ progress, playground, bookmarks, themeCtx }}>
       {children}
     </AppContext.Provider>
   );
