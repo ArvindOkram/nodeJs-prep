@@ -160,6 +160,71 @@
 
 .clearOutputBtn:hover { color: var(--text-bright); border-color: var(--text-muted); }
 
+/* Confirm Dialog */
+.confirmOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  backdrop-filter: blur(2px);
+}
+
+.confirmBox {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  width: 220px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.confirmMsg {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-bright);
+  line-height: 1.4;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 8px;
+}
+
+.confirmYes {
+  flex: 1;
+  padding: 7px 0;
+  background: var(--accent-red);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.confirmYes:hover { opacity: 0.85; }
+
+.confirmNo {
+  flex: 1;
+  padding: 7px 0;
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.confirmNo:hover { color: var(--text-bright); }
+
 /* Output Console */
 .console {
   height: 240px;

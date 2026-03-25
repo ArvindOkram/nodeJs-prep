@@ -1,17 +1,18 @@
-import { useEffect, useRef, useCallback, lazy, Suspense } from 'react';
+import { useEffect, useRef, useCallback, useState, lazy, Suspense } from 'react';
 import { useAppContext } from '../../context/AppContext';
 import OutputConsole from './OutputConsole';
 import styles from './Playground.module.css';
 
-// Lazy load Monaco to avoid SSR/startup issues
 const MonacoEditor = lazy(() => import('@monaco-editor/react'));
 
 export default function Playground() {
   const { playground } = useAppContext();
-  const { isOpen, toggleOpen, code, setCode, output, run, clearOutput, clearEditor, isRunning } = playground;
+  const { isOpen, toggleOpen, code, setCode, output, run, clearOutput, isRunning } = playground;
 
-  const panelRef = useRef(null);
-  const dragRef  = useRef({ dragging: false, startX: 0, startW: 0 });
+  const panelRef  = useRef(null);
+  const dragRef   = useRef({ dragging: false, startX: 0, startW: 0 });
+  const editorRef = useRef(null); // holds the Monaco editor instance
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // Keyboard shortcut: Ctrl+Enter / Cmd+Enter to run
   useEffect(() => {
@@ -45,6 +46,16 @@ export default function Playground() {
     window.addEventListener('mouseup', onUp);
   }, []);
 
+  // Directly clear Monaco editor via instance + sync React state
+  const handleConfirmClear = useCallback(() => {
+    if (editorRef.current) {
+      editorRef.current.setValue('');
+    }
+    setCode('');
+    clearOutput();
+    setShowConfirm(false);
+  }, [setCode, clearOutput]);
+
   if (!isOpen) {
     return (
       <button className={styles.collapsedTab} onClick={toggleOpen} title="Open Playground">
@@ -75,6 +86,7 @@ export default function Playground() {
             language="javascript"
             theme="vs-dark"
             value={code}
+            onMount={(editor) => { editorRef.current = editor; }}
             onChange={(val) => setCode(val ?? '')}
             options={{
               fontSize: 13,
@@ -92,20 +104,37 @@ export default function Playground() {
 
       {/* Toolbar */}
       <div className={styles.toolbar}>
-        <button
-          className={styles.runBtn}
-          onClick={run}
-          disabled={isRunning}
-        >
+        <button className={styles.runBtn} onClick={run} disabled={isRunning}>
           {isRunning ? '⏳ Running…' : '▶ Run'}
         </button>
-        <button className={styles.clearBtn} onClick={clearEditor} title="Clear editor code and output">
+        <button
+          className={styles.clearBtn}
+          onClick={() => setShowConfirm(true)}
+          title="Clear editor and output"
+        >
           🗑 Clear
         </button>
         <button className={styles.clearOutputBtn} onClick={clearOutput} title="Clear console output only">
           ✕ Output
         </button>
       </div>
+
+      {/* Confirm dialog */}
+      {showConfirm && (
+        <div className={styles.confirmOverlay}>
+          <div className={styles.confirmBox}>
+            <p className={styles.confirmMsg}>Clear all code and output?</p>
+            <div className={styles.confirmActions}>
+              <button className={styles.confirmYes} onClick={handleConfirmClear}>
+                Yes, clear
+              </button>
+              <button className={styles.confirmNo} onClick={() => setShowConfirm(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Output */}
       <OutputConsole output={output} isRunning={isRunning} />
