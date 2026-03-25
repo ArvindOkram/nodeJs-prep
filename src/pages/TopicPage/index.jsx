@@ -34,7 +34,7 @@ function addCopyButtons(container) {
 export default function TopicPage() {
   const { topicId } = useParams();
   const navigate = useNavigate();
-  const { progress, playground, bookmarks } = useAppContext();
+  const { progress, playground, bookmarks, themeCtx } = useAppContext();
   const contentRef = useRef(null);
 
   const topic = topicsById[topicId];
@@ -68,6 +68,13 @@ export default function TopicPage() {
     <article className={styles.page}>
       <div className={styles.topBar}>
         <div className={styles.topBarLeft}>
+          <button
+            className={styles.themeToggle}
+            onClick={themeCtx.toggle}
+            title={`Switch to ${themeCtx.theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {themeCtx.theme === 'dark' ? '☀ Light' : '☽ Dark'}
+          </button>
           <span className={styles.category}>{topic.category}</span>
           <span className={styles.readTime}>⏱ {readTime} min read</span>
         </div>

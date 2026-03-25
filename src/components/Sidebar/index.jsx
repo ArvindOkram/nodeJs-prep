@@ -12,7 +12,7 @@ function stripHtml(html) {
 }
 
 export default function Sidebar() {
-  const { progress, bookmarks, themeCtx } = useAppContext();
+  const { progress, bookmarks } = useAppContext();
   const [query, setQuery] = useState('');
 
   const filteredByCategory = useMemo(() => {
@@ -41,18 +41,9 @@ export default function Sidebar() {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.header}>
-        <div className={styles.logoRow}>
-          <div className={styles.logo}>
-            <span className={styles.logoDot}>⬡</span>
-            <span className={styles.logoText}>Node.js Prep</span>
-          </div>
-          <button
-            className={styles.themeToggle}
-            onClick={themeCtx.toggle}
-            title={`Switch to ${themeCtx.theme === 'dark' ? 'light' : 'dark'} mode`}
-          >
-            {themeCtx.theme === 'dark' ? '☀' : '☽'}
-          </button>
+        <div className={styles.logo}>
+          <span className={styles.logoDot}>⬡</span>
+          <span className={styles.logoText}>Node.js Prep</span>
         </div>
 
         <div className={styles.progressWrap}>
