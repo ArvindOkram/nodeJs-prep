@@ -144,7 +144,21 @@
   transition: color 0.15s, border-color 0.15s;
 }
 
-.clearBtn:hover { color: var(--text-bright); border-color: var(--text-muted); }
+.clearBtn:hover { color: var(--accent-red); border-color: var(--accent-red); }
+
+.clearOutputBtn {
+  padding: 7px 10px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.clearOutputBtn:hover { color: var(--text-bright); border-color: var(--text-muted); }
 
 /* Output Console */
 .console {

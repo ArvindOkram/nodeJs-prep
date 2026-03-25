@@ -50,6 +50,11 @@ export function usePlayground() {
 
   const clearOutput = useCallback(() => setOutput([]), []);
 
+  const clearEditor = useCallback(() => {
+    setCode('');
+    setOutput([]);
+  }, [setCode]);
+
   const resetCode = useCallback(() => {
     setCode(DEFAULT_CODE);
     setOutput([]);
@@ -64,6 +69,7 @@ export function usePlayground() {
     output,
     run,
     clearOutput,
+    clearEditor,
     resetCode,
     isRunning,
   };

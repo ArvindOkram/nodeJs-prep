@@ -8,7 +8,7 @@ const MonacoEditor = lazy(() => import('@monaco-editor/react'));
 
 export default function Playground() {
   const { playground } = useAppContext();
-  const { isOpen, toggleOpen, code, setCode, output, run, clearOutput, isRunning } = playground;
+  const { isOpen, toggleOpen, code, setCode, output, run, clearOutput, clearEditor, isRunning } = playground;
 
   const panelRef = useRef(null);
   const dragRef  = useRef({ dragging: false, startX: 0, startW: 0 });
@@ -99,8 +99,11 @@ export default function Playground() {
         >
           {isRunning ? '⏳ Running…' : '▶ Run'}
         </button>
-        <button className={styles.clearBtn} onClick={clearOutput}>
+        <button className={styles.clearBtn} onClick={clearEditor} title="Clear editor code and output">
           🗑 Clear
+        </button>
+        <button className={styles.clearOutputBtn} onClick={clearOutput} title="Clear console output only">
+          ✕ Output
         </button>
       </div>
 
