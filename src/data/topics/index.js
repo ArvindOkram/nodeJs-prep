@@ -20,6 +20,9 @@ import { clickhouse } from './databases/clickhouse';
 import { kafka } from './messaging/kafka';
 import { temporal } from './messaging/temporal';
 
+// TypeScript
+import { typescript } from './typescript/typescript';
+
 // Search & Analytics
 import { elasticsearch } from './search/elasticsearch';
 
@@ -34,6 +37,9 @@ import { devops } from './devops/devops';
 
 // LLD & Design
 import { lld } from './lld/lld';
+
+// DSA
+import { dsa } from './dsa/dsa';
 
 export const topics = [
   // Languages
@@ -60,6 +66,9 @@ export const topics = [
   ...kafka,
   ...temporal,
 
+  // TypeScript
+  ...typescript,
+
   // Search & Analytics
   ...elasticsearch,
 
@@ -74,6 +83,9 @@ export const topics = [
 
   // LLD & Design
   ...lld,
+
+  // DSA
+  ...dsa,
 ];
 
 /** Quick lookup by id */

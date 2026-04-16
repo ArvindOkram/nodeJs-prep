@@ -11,6 +11,8 @@ const SECTION_DESCRIPTIONS = {
   'Databases': 'PostgreSQL, MongoDB, Redis & more',
   'Messaging & Workflows': 'Kafka & Temporal deep dives',
   'Search & Analytics': 'Elasticsearch mastery',
+  'TypeScript': 'Type system, generics, patterns & backend typing',
+  'DSA & Coding': 'Arrays, trees, graphs, DP & sorting in C++',
   'HLD & System Design': 'CAP theorem, caching, sharding & API design',
   'AWS': 'Lambda, SQS, S3 & architecture patterns',
   'DevOps & Observability': 'Docker, CI/CD, tracing & alerting',

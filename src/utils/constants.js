@@ -23,6 +23,9 @@ export const CATEGORY_ORDER = [
   'MongoDB',
   'Redis',
   'ClickHouse',
+  'TypeScript Core',
+  'TypeScript Advanced',
+  'TypeScript Patterns',
   'Kafka',
   'Temporal',
   'Elasticsearch',
@@ -36,6 +39,11 @@ export const CATEGORY_ORDER = [
   'SOLID',
   'Design Patterns',
   'LLD Problems',
+  'Arrays & Strings',
+  'Trees & Graphs',
+  'DP & Greedy',
+  'Core DS',
+  'Sorting & Searching',
   'Interview',
 ];
 
@@ -60,6 +68,11 @@ export const SECTIONS = [
     name: 'Databases',
     icon: '🗄️',
     categories: ['Databases', 'PostgreSQL', 'MongoDB', 'Redis', 'ClickHouse'],
+  },
+  {
+    name: 'TypeScript',
+    icon: '🔷',
+    categories: ['TypeScript Core', 'TypeScript Advanced', 'TypeScript Patterns'],
   },
   {
     name: 'Messaging & Workflows',
@@ -92,6 +105,11 @@ export const SECTIONS = [
     categories: ['SOLID', 'Design Patterns', 'LLD Problems'],
   },
   {
+    name: 'DSA & Coding',
+    icon: '🧮',
+    categories: ['Arrays & Strings', 'Trees & Graphs', 'DP & Greedy', 'Core DS', 'Sorting & Searching'],
+  },
+  {
     name: 'Interview Prep',
     icon: '🎯',
     categories: ['Interview'],
@@ -115,6 +133,9 @@ export const CATEGORY_ICONS = {
   PostgreSQL: '🐘',
   MongoDB: '🍃',
   Redis: '⚡',
+  'TypeScript Core': '🔷',
+  'TypeScript Advanced': '🔶',
+  'TypeScript Patterns': '🏭',
   Kafka: '📡',
   Elasticsearch: '🔍',
   ClickHouse: '🏠',
@@ -129,6 +150,11 @@ export const CATEGORY_ICONS = {
   SOLID: '🧱',
   'Design Patterns': '🎨',
   'LLD Problems': '🏗️',
+  'Arrays & Strings': '🔢',
+  'Trees & Graphs': '🌳',
+  'DP & Greedy': '🧩',
+  'Core DS': '📚',
+  'Sorting & Searching': '🔍',
 };
 
 export const DEFAULT_CODE = `// Welcome to the JS Playground!
