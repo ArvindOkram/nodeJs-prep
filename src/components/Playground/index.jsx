@@ -6,14 +6,22 @@ import styles from './Playground.module.css';
 
 const MonacoEditor = lazy(() => import('@monaco-editor/react'));
 
+const MODE_CONFIG = {
+  javascript: { title: 'JS Playground', icon: '⌨', language: 'javascript' },
+  sql:        { title: 'SQL Editor', icon: '🐘', language: 'sql' },
+  mongodb:    { title: 'MongoDB Shell', icon: '🍃', language: 'javascript' },
+};
+
 export default function Playground() {
   const { playground } = useAppContext();
-  const { isOpen, toggleOpen, code, setCode, output, run, clearOutput, isRunning } = playground;
+  const { isOpen, toggleOpen, code, setCode, output, run, clearOutput, isRunning, editorMode } = playground;
 
   const panelRef  = useRef(null);
   const dragRef   = useRef({ dragging: false, startX: 0, startW: 0 });
   const editorRef = useRef(null); // holds the Monaco editor instance
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const config = MODE_CONFIG[editorMode] || MODE_CONFIG.javascript;
 
   // Keyboard shortcut: Ctrl+Enter / Cmd+Enter to run
   useEffect(() => {
@@ -49,18 +57,23 @@ export default function Playground() {
 
   // Directly clear Monaco editor via instance + sync React state
   const handleConfirmClear = useCallback(() => {
+    const blank = editorMode === 'sql'
+      ? '-- Write your SQL here\n\n'
+      : editorMode === 'mongodb'
+      ? '// Write your MongoDB queries here\n\n'
+      : BLANK_CODE;
     if (editorRef.current) {
-      editorRef.current.setValue(BLANK_CODE);
+      editorRef.current.setValue(blank);
     }
-    setCode(BLANK_CODE);
+    setCode(blank);
     clearOutput();
     setShowConfirm(false);
-  }, [setCode, clearOutput]);
+  }, [setCode, clearOutput, editorMode]);
 
   if (!isOpen) {
     return (
       <button className={styles.collapsedTab} onClick={toggleOpen} title="Open Playground">
-        <span className={styles.tabText}>⌨ Playground</span>
+        <span className={styles.tabText}>{config.icon} {config.title}</span>
       </button>
     );
   }
@@ -72,19 +85,37 @@ export default function Playground() {
 
       {/* Header */}
       <div className={styles.header}>
-        <span className={styles.title}>⌨ JS Playground</span>
+        <span className={styles.title}>{config.icon} {config.title}</span>
         <div className={styles.headerActions}>
+          {editorMode === 'sql' && (
+            <span className={styles.modeBadge}>SQLite</span>
+          )}
+          {editorMode === 'mongodb' && (
+            <span className={styles.modeBadgeMongo}>Mongo</span>
+          )}
           <span className={styles.hint}>Ctrl+Enter to run</span>
           <button className={styles.closeBtn} onClick={toggleOpen} title="Close">×</button>
         </div>
       </div>
+
+      {/* Schema hint for database modes */}
+      {editorMode === 'sql' && (
+        <div className={styles.schemaHint}>
+          Tables: <strong>employees</strong>, <strong>departments</strong>, <strong>orders</strong>, <strong>customers</strong>, <strong>products</strong>
+        </div>
+      )}
+      {editorMode === 'mongodb' && (
+        <div className={styles.schemaHintMongo}>
+          Collections: <strong>db.users</strong>, <strong>db.orders</strong>, <strong>db.products</strong>
+        </div>
+      )}
 
       {/* Editor */}
       <div className={styles.editorWrap}>
         <Suspense fallback={<div className={styles.editorLoading}>Loading editor…</div>}>
           <MonacoEditor
             height="100%"
-            language="javascript"
+            language={config.language}
             theme="vs-dark"
             value={code}
             onMount={(editor) => { editorRef.current = editor; }}
@@ -138,7 +169,7 @@ export default function Playground() {
       )}
 
       {/* Output */}
-      <OutputConsole output={output} isRunning={isRunning} />
+      <OutputConsole output={output} isRunning={isRunning} editorMode={editorMode} />
     </aside>
   );
 }

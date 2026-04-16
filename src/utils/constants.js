@@ -19,6 +19,12 @@ export const CATEGORY_ORDER = [
   'Quality',
   'Advanced',
   'Interview',
+  'Databases',
+  'PostgreSQL',
+  'MongoDB',
+  'Redis',
+  'Kafka',
+  'Elasticsearch',
 ];
 
 export const CATEGORY_ICONS = {
@@ -34,6 +40,12 @@ export const CATEGORY_ICONS = {
   Quality: '✅',
   Advanced: '🚀',
   Interview: '🎯',
+  Databases: '🗄️',
+  PostgreSQL: '🐘',
+  MongoDB: '🍃',
+  Redis: '⚡',
+  Kafka: '📡',
+  Elasticsearch: '🔍',
 };
 
 export const DEFAULT_CODE = `// Welcome to the JS Playground!

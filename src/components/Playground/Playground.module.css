@@ -296,3 +296,103 @@
   font-size: inherit;
   line-height: 1.5;
 }
+
+/* Mode badges */
+.modeBadge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #61afef;
+  background: rgba(97, 175, 239, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.modeBadgeMongo {
+  font-size: 10px;
+  font-weight: 700;
+  color: #98c379;
+  background: rgba(152, 195, 121, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+/* Schema hint bar */
+.schemaHint, .schemaHintMongo {
+  padding: 5px 14px;
+  font-size: 11px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.schemaHint { background: rgba(97, 175, 239, 0.05); }
+.schemaHintMongo { background: rgba(152, 195, 121, 0.05); }
+
+.schemaHint strong, .schemaHintMongo strong {
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+/* SQL Table Results */
+.sqlTableWrap {
+  padding: 4px 8px;
+  overflow-x: auto;
+}
+
+.sqlTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+}
+
+.sqlTable th {
+  background: rgba(97, 175, 239, 0.15);
+  color: var(--accent);
+  padding: 4px 8px;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.sqlTable td {
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sqlTable tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sqlTable tr:hover td {
+  background: rgba(97, 175, 239, 0.08);
+}
+
+.nullVal {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.noRows {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 8px !important;
+}
+
+.rowCount {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: right;
+  padding: 2px 4px;
+}

@@ -88,10 +88,10 @@ export default function TopicPage() {
           </button>
           <button
             className={styles.tryBtn}
-            onClick={() => playground.loadCode(topic.starterCode)}
+            onClick={() => playground.loadCode(topic.starterCode, topic.editorMode || 'javascript')}
             title="Load this topic's code into the playground"
           >
-            ⌨ Try in Playground
+            {topic.editorMode === 'sql' ? '🐘 Try SQL' : topic.editorMode === 'mongodb' ? '🍃 Try MongoDB' : '⌨ Try in Playground'}
           </button>
         </div>
       </div>
