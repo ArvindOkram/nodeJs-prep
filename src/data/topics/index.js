@@ -23,6 +23,18 @@ import { temporal } from './messaging/temporal';
 // Search & Analytics
 import { elasticsearch } from './search/elasticsearch';
 
+// HLD & System Design
+import { hld } from './hld/hld';
+
+// AWS
+import { aws } from './aws/aws';
+
+// DevOps & Observability
+import { devops } from './devops/devops';
+
+// LLD & Design
+import { lld } from './lld/lld';
+
 export const topics = [
   // Languages
   ...javascript,
@@ -50,6 +62,18 @@ export const topics = [
 
   // Search & Analytics
   ...elasticsearch,
+
+  // HLD & System Design
+  ...hld,
+
+  // AWS
+  ...aws,
+
+  // DevOps & Observability
+  ...devops,
+
+  // LLD & Design
+  ...lld,
 ];
 
 /** Quick lookup by id */

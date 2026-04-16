@@ -11,6 +11,10 @@ const SECTION_DESCRIPTIONS = {
   'Databases': 'PostgreSQL, MongoDB, Redis & more',
   'Messaging & Workflows': 'Kafka & Temporal deep dives',
   'Search & Analytics': 'Elasticsearch mastery',
+  'HLD & System Design': 'CAP theorem, caching, sharding & API design',
+  'AWS': 'Lambda, SQS, S3 & architecture patterns',
+  'DevOps & Observability': 'Docker, CI/CD, tracing & alerting',
+  'LLD & Design': 'SOLID, design patterns & LLD problems',
   'Interview Prep': 'Tips, patterns & common questions',
 };
 

@@ -26,6 +26,16 @@ export const CATEGORY_ORDER = [
   'Kafka',
   'Temporal',
   'Elasticsearch',
+  'System Design',
+  'Scalability',
+  'API & Communication',
+  'AWS',
+  'Docker',
+  'CI/CD',
+  'Observability',
+  'SOLID',
+  'Design Patterns',
+  'LLD Problems',
   'Interview',
 ];
 
@@ -62,6 +72,26 @@ export const SECTIONS = [
     categories: ['Elasticsearch'],
   },
   {
+    name: 'HLD & System Design',
+    icon: '🏛️',
+    categories: ['System Design', 'Scalability', 'API & Communication'],
+  },
+  {
+    name: 'AWS',
+    icon: '☁️',
+    categories: ['AWS'],
+  },
+  {
+    name: 'DevOps & Observability',
+    icon: '🛠️',
+    categories: ['Docker', 'CI/CD', 'Observability'],
+  },
+  {
+    name: 'LLD & Design',
+    icon: '🏗️',
+    categories: ['SOLID', 'Design Patterns', 'LLD Problems'],
+  },
+  {
     name: 'Interview Prep',
     icon: '🎯',
     categories: ['Interview'],
@@ -89,6 +119,16 @@ export const CATEGORY_ICONS = {
   Elasticsearch: '🔍',
   ClickHouse: '🏠',
   Temporal: '⏱️',
+  'System Design': '🏛️',
+  Scalability: '📈',
+  'API & Communication': '🔗',
+  AWS: '☁️',
+  Docker: '🐳',
+  'CI/CD': '🔁',
+  Observability: '📊',
+  SOLID: '🧱',
+  'Design Patterns': '🎨',
+  'LLD Problems': '🏗️',
 };
 
 export const DEFAULT_CODE = `// Welcome to the JS Playground!
