@@ -12,30 +12,32 @@ const TYPE_STYLE = {
 function SqlTable({ columns, values }) {
   return (
     <div className={styles.sqlTableWrap}>
-      <table className={styles.sqlTable}>
-        <thead>
-          <tr>
-            {columns.map((col, i) => (
-              <th key={i}>{col}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {values.length === 0 ? (
+      <div className={styles.sqlTableContainer}>
+        <table className={styles.sqlTable}>
+          <thead>
             <tr>
-              <td colSpan={columns.length} className={styles.noRows}>No rows returned</td>
+              {columns.map((col, i) => (
+                <th key={i}>{col}</th>
+              ))}
             </tr>
-          ) : (
-            values.map((row, ri) => (
-              <tr key={ri}>
-                {row.map((val, ci) => (
-                  <td key={ci}>{val === null ? <span className={styles.nullVal}>NULL</span> : String(val)}</td>
-                ))}
+          </thead>
+          <tbody>
+            {values.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length} className={styles.noRows}>No rows returned</td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              values.map((row, ri) => (
+                <tr key={ri}>
+                  {row.map((val, ci) => (
+                    <td key={ci}>{val === null ? <span className={styles.nullVal}>NULL</span> : String(val)}</td>
+                  ))}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
       <div className={styles.rowCount}>{values.length} row{values.length !== 1 ? 's' : ''}</div>
     </div>
   );
@@ -49,20 +51,34 @@ export default function OutputConsole({ output, isRunning, editorMode }) {
   }, [output]);
 
   const placeholder = editorMode === 'sql'
-    ? 'Write SQL and click ▶ Run or press Ctrl+Enter'
+    ? 'Write SQL and press Ctrl+Enter to execute'
     : editorMode === 'mongodb'
-    ? 'Write MongoDB queries and click ▶ Run or press Ctrl+Enter'
-    : 'Click ▶ Run or press Ctrl+Enter to execute';
+    ? 'Write MongoDB queries and press Ctrl+Enter'
+    : 'Press Ctrl+Enter to execute your code';
+
+  const consoleLabel = editorMode === 'sql' ? 'Results' : 'Output';
+  const consoleIcon = editorMode === 'sql' ? '\u25A4' : '\u25B8';
 
   return (
     <div className={styles.console}>
       <div className={styles.consoleHeader}>
-        <span>{editorMode === 'sql' ? 'Results' : editorMode === 'mongodb' ? 'Output' : 'Output'}</span>
-        {isRunning && <span className={styles.running}>● running…</span>}
+        <span className={styles.consoleHeaderLabel}>
+          <span className={styles.consoleIcon}>{consoleIcon}</span>
+          {consoleLabel}
+        </span>
+        {isRunning && (
+          <span className={styles.running}>
+            <span className={styles.runningDot} />
+            running...
+          </span>
+        )}
       </div>
       <div className={styles.consoleBody}>
         {output.length === 0 ? (
-          <span className={styles.placeholder}>{placeholder}</span>
+          <div className={styles.placeholder}>
+            <span className={styles.placeholderIcon}>{editorMode === 'sql' ? '\u25A4' : '\u25B6'}</span>
+            <span className={styles.placeholderText}>{placeholder}</span>
+          </div>
         ) : (
           output.map((line, i) => {
             if (line.type === 'table') {
@@ -71,7 +87,7 @@ export default function OutputConsole({ output, isRunning, editorMode }) {
             return (
               <div key={i} className={TYPE_STYLE[line.type] ?? styles.logLine}>
                 {line.type !== 'meta' && (
-                  <span className={styles.prompt}>›</span>
+                  <span className={styles.prompt}>&rsaquo;</span>
                 )}
                 <pre className={styles.lineText}>{line.text}</pre>
               </div>

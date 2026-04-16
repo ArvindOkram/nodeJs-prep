@@ -13,20 +13,59 @@ export const CATEGORY_ORDER = [
   'Modules',
   'Core',
   'Scaling',
+  'Advanced',
   'Web',
   'Security',
   'DevOps',
   'Quality',
-  'Advanced',
-  'Interview',
   'Databases',
   'PostgreSQL',
   'MongoDB',
   'Redis',
-  'Kafka',
-  'Elasticsearch',
   'ClickHouse',
+  'Kafka',
   'Temporal',
+  'Elasticsearch',
+  'Interview',
+];
+
+/** Sections group categories under visual headers in the sidebar */
+export const SECTIONS = [
+  {
+    name: 'Languages',
+    icon: '✨',
+    categories: ['JavaScript'],
+  },
+  {
+    name: 'Node.js',
+    icon: '⬡',
+    categories: ['Fundamentals', 'Async', 'Modules', 'Core', 'Scaling', 'Advanced'],
+  },
+  {
+    name: 'Backend',
+    icon: '🌐',
+    categories: ['Web', 'Security', 'DevOps', 'Quality'],
+  },
+  {
+    name: 'Databases',
+    icon: '🗄️',
+    categories: ['Databases', 'PostgreSQL', 'MongoDB', 'Redis', 'ClickHouse'],
+  },
+  {
+    name: 'Messaging & Workflows',
+    icon: '📡',
+    categories: ['Kafka', 'Temporal'],
+  },
+  {
+    name: 'Search & Analytics',
+    icon: '🔍',
+    categories: ['Elasticsearch'],
+  },
+  {
+    name: 'Interview Prep',
+    icon: '🎯',
+    categories: ['Interview'],
+  },
 ];
 
 export const CATEGORY_ICONS = {

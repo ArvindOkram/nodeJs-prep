@@ -70,10 +70,19 @@ export default function Playground() {
     setShowConfirm(false);
   }, [setCode, clearOutput, editorMode]);
 
+  const titleIconClass = editorMode === 'sql'
+    ? styles.titleIconSql
+    : editorMode === 'mongodb'
+    ? styles.titleIconMongo
+    : styles.titleIconJs;
+
   if (!isOpen) {
     return (
       <button className={styles.collapsedTab} onClick={toggleOpen} title="Open Playground">
-        <span className={styles.tabText}>{config.icon} {config.title}</span>
+        <span className={styles.tabContent}>
+          <span className={styles.tabIcon}>&#9654;</span>
+          <span className={styles.tabText}>{config.title}</span>
+        </span>
       </button>
     );
   }
@@ -85,7 +94,10 @@ export default function Playground() {
 
       {/* Header */}
       <div className={styles.header}>
-        <span className={styles.title}>{config.icon} {config.title}</span>
+        <span className={styles.title}>
+          <span className={titleIconClass}>{config.icon}</span>
+          {config.title}
+        </span>
         <div className={styles.headerActions}>
           {editorMode === 'sql' && (
             <span className={styles.modeBadge}>SQLite</span>
@@ -93,26 +105,35 @@ export default function Playground() {
           {editorMode === 'mongodb' && (
             <span className={styles.modeBadgeMongo}>Mongo</span>
           )}
-          <span className={styles.hint}>Ctrl+Enter to run</span>
-          <button className={styles.closeBtn} onClick={toggleOpen} title="Close">×</button>
+          <span className={styles.headerSeparator} />
+          <span className={styles.hint}>Ctrl+Enter</span>
+          <button className={styles.closeBtn} onClick={toggleOpen} title="Close">&#215;</button>
         </div>
       </div>
 
       {/* Schema hint for database modes */}
       {editorMode === 'sql' && (
         <div className={styles.schemaHint}>
+          <span className={styles.schemaIcon}>&#128450;</span>
           Tables: <strong>employees</strong>, <strong>departments</strong>, <strong>orders</strong>, <strong>customers</strong>, <strong>products</strong>
         </div>
       )}
       {editorMode === 'mongodb' && (
         <div className={styles.schemaHintMongo}>
+          <span className={styles.schemaIcon}>&#128451;</span>
           Collections: <strong>db.users</strong>, <strong>db.orders</strong>, <strong>db.products</strong>
         </div>
       )}
 
       {/* Editor */}
       <div className={styles.editorWrap}>
-        <Suspense fallback={<div className={styles.editorLoading}>Loading editor…</div>}>
+        <Suspense fallback={
+          <div className={styles.editorLoading}>
+            <span className={styles.loadingDot} />
+            <span className={styles.loadingDot} />
+            <span className={styles.loadingDot} />
+          </div>
+        }>
           <MonacoEditor
             height="100%"
             language={config.language}
@@ -137,17 +158,20 @@ export default function Playground() {
       {/* Toolbar */}
       <div className={styles.toolbar}>
         <button className={styles.runBtn} onClick={run} disabled={isRunning}>
-          {isRunning ? '⏳ Running…' : '▶ Run'}
+          <span className={styles.runBtnIcon}>{isRunning ? '\u23F3' : '\u25B6'}</span>
+          {isRunning ? 'Running\u2026' : 'Run'}
         </button>
         <button
           className={styles.clearBtn}
           onClick={() => setShowConfirm(true)}
           title="Clear editor and output"
         >
-          🗑 Clear
+          <span className={styles.btnIcon}>&#128465;</span>
+          Clear
         </button>
         <button className={styles.clearOutputBtn} onClick={clearOutput} title="Clear console output only">
-          ✕ Output
+          <span className={styles.btnIcon}>&#10005;</span>
+          Output
         </button>
       </div>
 
@@ -155,6 +179,7 @@ export default function Playground() {
       {showConfirm && (
         <div className={styles.confirmOverlay}>
           <div className={styles.confirmBox}>
+            <span className={styles.confirmIcon}>&#9888;</span>
             <p className={styles.confirmMsg}>Clear all code and output?</p>
             <div className={styles.confirmActions}>
               <button className={styles.confirmYes} onClick={handleConfirmClear}>
