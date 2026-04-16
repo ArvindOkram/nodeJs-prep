@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import Sidebar from './components/Sidebar';
 import Playground from './components/Playground';
+import Chatbot from './components/Chatbot';
 import TopicPage from './pages/TopicPage';
 import HomePage from './pages/HomePage';
 import styles from './App.module.css';
@@ -27,6 +28,7 @@ export default function App() {
     <BrowserRouter>
       <AppProvider>
         <AppLayout />
+        <Chatbot />
       </AppProvider>
     </BrowserRouter>
   );
