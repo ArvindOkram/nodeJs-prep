@@ -11,6 +11,8 @@ import { kafka } from './kafka';
 import { databases } from './databases';
 import { redis } from './redis';
 import { elasticsearch } from './elasticsearch';
+import { clickhouse } from './clickhouse';
+import { temporal } from './temporal';
 
 export const topics = [
   ...fundamentals,
@@ -28,6 +30,8 @@ export const topics = [
   ...redis,
   ...kafka,
   ...elasticsearch,
+  ...clickhouse,
+  ...temporal,
 ];
 
 /** Quick lookup by id */

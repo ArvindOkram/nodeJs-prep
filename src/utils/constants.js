@@ -25,6 +25,8 @@ export const CATEGORY_ORDER = [
   'Redis',
   'Kafka',
   'Elasticsearch',
+  'ClickHouse',
+  'Temporal',
 ];
 
 export const CATEGORY_ICONS = {
@@ -46,6 +48,8 @@ export const CATEGORY_ICONS = {
   Redis: '⚡',
   Kafka: '📡',
   Elasticsearch: '🔍',
+  ClickHouse: '🏠',
+  Temporal: '⏱️',
 };
 
 export const DEFAULT_CODE = `// Welcome to the JS Playground!

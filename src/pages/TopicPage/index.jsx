@@ -43,8 +43,16 @@ export default function TopicPage() {
     if (topic) {
       progress.markVisited(topicId);
       localStorage.setItem('njip_last_topic', topicId);
+
+      // Auto-switch playground to the right editor mode for DB topics
+      const mode = topic.editorMode || 'javascript';
+      if (mode !== 'javascript' && playground.editorMode !== mode) {
+        playground.loadCode(topic.starterCode, mode);
+      } else if (mode === 'javascript' && playground.editorMode !== 'javascript') {
+        playground.setEditorMode('javascript');
+      }
     }
-  }, [topicId, topic, progress]);
+  }, [topicId, topic, progress, playground]);
 
   // Inject copy buttons after content renders
   useEffect(() => {
